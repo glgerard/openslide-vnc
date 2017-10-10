@@ -3,8 +3,8 @@ FROM ubuntu:16.04
 WORKDIR /tmp/working
 
 # Set proxy server, replace host:/port with values for your servers
-ENV http_proxy 'http://www-proxy-lon.uk.oracle.com:80'
-ENV https_proxy 'https://www-proxy-lon.uk.oracle.com:80'
+#ENV http_proxy 'http://<your-proxy-ip>:<port>'
+#ENV https_proxy 'https://<your-proxy-ip>:<port>'
 
 ENV DEBIAN_FRONTEND=noninteractive
 
