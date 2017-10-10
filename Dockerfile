@@ -2,6 +2,10 @@ FROM ubuntu:16.04
 
 WORKDIR /tmp/working
 
+# Set proxy server, replace host:/port with values for your servers
+ENV http_proxy 'http://www-proxy-lon.uk.oracle.com:80'
+ENV https_proxy 'https://www-proxy-lon.uk.oracle.com:80'
+
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
@@ -42,4 +46,11 @@ ADD xstartup /root/.vnc
 ADD config /root/.vnc
 ADD passwd /root/.vnc
 
+# Necessary if the container is built on Windows
+# hosts
+RUN chmod og+x /root/.vnc/xstartup
+RUN chmod 0600 /root/.vnc/passwd
+RUN chmod -x /root/.vnc/config
+
+#CMD [ "/bin/bash" ]
 CMD [ "vncserver", "-fg" ]
