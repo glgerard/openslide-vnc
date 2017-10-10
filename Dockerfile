@@ -41,10 +41,7 @@ ENV PATH /opt/ASAP/bin:$PATH
     
 EXPOSE 5901
 
-RUN mkdir /root/.vnc
-ADD xstartup /root/.vnc
-ADD config /root/.vnc
-ADD passwd /root/.vnc
+ADD vnc.tar.bz2 /root/.vnc
 
 # Necessary if the container is built on Windows
 # hosts
@@ -52,5 +49,4 @@ RUN chmod og+x /root/.vnc/xstartup
 RUN chmod 0600 /root/.vnc/passwd
 RUN chmod -x /root/.vnc/config
 
-#CMD [ "/bin/bash" ]
 CMD [ "vncserver", "-fg" ]
