@@ -17,14 +17,3 @@ The recommended way to start the docker is with
 ```bash
   docker run -d --rm -v $PWD:/tmp/working -v <host-data-path>:/data -p 5901:5901 <image-name>
 ```
-
-## Windows specific
-
-If you are building the image on Windows before cloning the repo run the following
-
-```bash
-  git config core.eol lf
-```
-
-This will prevent the configuration files to be terminated with CRLF which would cause an issue once copied
-in the container filesystem.
