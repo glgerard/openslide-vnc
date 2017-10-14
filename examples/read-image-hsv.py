@@ -6,17 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def get_region(wsi, downsample, top_left_x, top_left_y, size):
+def get_region(wsi, level, ds, top_left_x, top_left_y, size):
     # read a downsampled squared region of wsi
     # with the top_left corner relative
     # position (pw, ph) and side of size pixels
-
-    w, h = wsi.dimensions
-
-    level = wsi.get_best_level_for_downsample(downsample)
-    print("Level", level)
-
-    actual_downsample = wsi.level_downsamples[level]
 
     wl, hl = wsi.level_dimensions[level]
     print("Downsample dimensions ({},{})".format(wl, hl))
@@ -33,6 +26,8 @@ def get_region(wsi, downsample, top_left_x, top_left_y, size):
 
     # Avoid out of image top left corner of
     # the wsi region
+    w, h = wsi.dimensions
+
     if top_left_x < 0:
         top_left_x = 0
     elif top_left_x > w:
@@ -45,15 +40,18 @@ def get_region(wsi, downsample, top_left_x, top_left_y, size):
 
     # Avoid out of image bottom down corner of
     # the wsi region
-    if top_left_x/actual_downsample + int(size) > wl:
-        width = wl - int(top_left_x/actual_downsample)
+    if top_left_x/ds + int(size) > wl:
+        width = wl - int(top_left_x/ds)
     else:
         width = int(size)
 
-    if top_left_y/actual_downsample + int(size) > hl:
-        height = hl - int(top_left_y/actual_downsample)
+    if top_left_y/ds + int(size) > hl:
+        height = hl - int(top_left_y/ds)
     else:
         height = int(size)
+
+    print(top_left_x, top_left_y)
+    print(width, height)
 
     return wsi.read_region((top_left_x, top_left_y),
                            level,
@@ -134,11 +132,14 @@ def main(argv):
         img_mask = None
         if size > 0:
             w, h = wsi.dimensions
+            level = wsi.get_best_level_for_downsample(downsample)
+            print("Level", level)
+            ds = wsi.level_downsamples[level]
             x = int(w*width_pos)
             y = int(h*height_pos)
-            img = get_region(wsi, downsample, x, y, size)
+            img = get_region(wsi, level, ds, x, y, size)
             if wsi_mask:
-                tmp_img_mask = get_region(wsi_mask, downsample, x, y, size)
+                tmp_img_mask = get_region(wsi_mask, level, ds, x, y, size)
                 img_mask = cv2.cvtColor(np.array(tmp_img_mask.convert('RGB')), cv2.COLOR_RGB2BGR)
 
         if img:
@@ -156,11 +157,10 @@ def main(argv):
             axarr[0, 1].imshow(threshHS, 'gray')
             axarr[1, 0].imshow(pil_image_blk_bg)
             if img_mask is not None:
-                g = np.zeros(open_cv_image.shape)
-                g[:img_mask.shape[0], :img_mask.shape[1], :img_mask.shape[2]] = img_mask
-                open_cv_image[:, :, :] = open_cv_image + g
-#                masked_pil_image = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2RGB)
-                axarr[1, 1].imshow(cv2.cvtColor(img_mask, cv2.COLOR_BGR2RGB))
+                cv_image_msk_bg = np.zeros_like(pil_image_blk_bg)
+                cv_image_msk_bg[:img_mask.shape[0], :img_mask.shape[1], 1] = img_mask[:, :, 1]
+                cv_image_msk_bg = cv2.add(pil_image_blk_bg,cv_image_msk_bg)
+                axarr[1, 1].imshow(cv_image_msk_bg)
             plt.show()
 
         cont = input("Continue? [Y/N] ")
