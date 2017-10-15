@@ -72,8 +72,8 @@ def get_region(wsi, level, ds, top_left_x, top_left_y, size):
     else:
         height = int(size)
 
-    print(top_left_x, top_left_y)
-    print(width, height)
+    #print(top_left_x, top_left_y)
+    #print(width, height)
 
     return wsi.read_region((top_left_x, top_left_y),
                            level,
@@ -170,9 +170,13 @@ def main(argv):
             hsv_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2HSV)
             h = hsv_cv_image[:, :, 0]
             s = hsv_cv_image[:, :, 1]
-            _, threshH = cv2.threshold(h, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            _, threshS = cv2.threshold(s, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            retH, threshH = cv2.threshold(h, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            retS, threshS = cv2.threshold(s, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            print('Threshold levels: {}, {}'.format(retH, retS))
             threshHS = cv2.bitwise_or(threshH, threshS)
+            fbr = foreground_ratio(threshHS)
+            if fbr:
+                print("The percentage of foreground is {:.2f}%".format(fbr*100.0))
             pil_image_blk_bg = cv2.bitwise_and(pil_image, pil_image, mask=threshHS)
             f, axarr = plt.subplots(2, 2, sharey=True)
             axarr[0, 0].imshow(pil_image)
@@ -216,6 +220,15 @@ def get_float(param_name, min, max):
 
     return value
 
+def foreground_ratio(img, fg=255, bg=0):
+    # For a two-level monochromatic image computes the ratio of foreground
+    # color, fg, vs background color, bg
+    if img.ndim > 2:
+        print('Only monochromatic images are accepts', file=sys.stderr)
+        return None
+
+    tmp = 1*(img == fg) + 0*(img == bg)
+    return np.mean(tmp)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
