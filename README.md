@@ -23,7 +23,7 @@ The default VNC password is dockervnc
 The recommended way to start the docker is with
 
 ```bash
-  docker run -d --rm -v $PWD:/tmp/working -v <host-data-path>:/data -p 5901:5901 <image-name>
+  docker run -d --rm -v $PWD:/tmp/working -v <host-data-path>:/data -p 5901:5901 openslide-vnc
 ```
 
 ## Acknowledgements
