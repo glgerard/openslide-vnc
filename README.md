@@ -8,6 +8,14 @@ For optimal display performance users connect with a VNC client to port 5901 of 
 localhost (or a port of their choice) and execute ASAP or their openslide based
 applications on the desktop environment of the docker container.
 
+## How to build
+
+Clone the repository and from the directory containing the Dockerfile run
+
+```bash
+  docker build -t openslide-vnc .
+```
+
 ## How to connect
 
 The default VNC password is dockervnc
