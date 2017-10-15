@@ -26,6 +26,9 @@ The recommended way to start the docker is with
   docker run -d --rm -v $PWD:/tmp/working -v <host-data-path>:/data -p 5901:5901 openslide-vnc
 ```
 
+where ```<host-data-path>``` must be changed to an actual path on your host where typically
+the datafiles are stored.
+
 ## Acknowledgements
 
 OpenSlide is a C library for reading whole slide image files.
