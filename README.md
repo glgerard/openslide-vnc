@@ -17,3 +17,13 @@ The recommended way to start the docker is with
 ```bash
   docker run -d --rm -v $PWD:/tmp/working -v <host-data-path>:/data -p 5901:5901 <image-name>
 ```
+
+## Acknowledgements
+
+OpenSlide is a C library for reading whole slide image files.
+It has been developed at Carnegie Mellon University.
+For further information please refer to http://openslide.org .
+
+ASAP is an open source platform for visualizing, 
+annotating and automatically analyzing whole-slide histopathology images.
+For further information please refer to https://github.com/GeertLitjens/ASAP .
